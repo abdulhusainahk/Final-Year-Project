@@ -1,16 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-WELCOME
-<form action = "" method = "post">
+<html>
+<style>
+
+.content {
+  max-width: 500px;
+  margin: auto;
+  padding: 10px;
+}
+
+input[type=file] {
+  width: 40%;
+  background-color: #EBA87C;
+  color:#F64C72;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #EBA87C;
+  color:#F64C72;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #F64C72;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
+
+<body style="background-color:#41B3A3;">
+<center>
+<h3>Demo Test Questionnaire</h3>
+
+<div class="content">
+  <form action = "" method = "post" enctype="multipart/form-data">
     {% csrf_token %}
-    <p>Your file: </p>
-    <input name="username" type="file">
-    <button type="submit">submit</button>
-</form>
+    <h5>Question: "Write sample question here" ? </h5>
+    <h5>Please upload model answer sheet below :</h5>
+    <input name="model-answer-sheet" type="file">
+
+    <h5>Please upload your answer sheet below :</h5>
+    <input name="answer-sheet" type="file"><br><br>
+    <button type="submit">Check result</button>
+    </form>
+{% if iscore %}
+  <br><br>
+  <h3>The score is {{ score }}</h3>
+  {% endif %}
+</div>
+
+</center>
 </body>
 </html>
