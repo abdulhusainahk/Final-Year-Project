@@ -1,74 +1,44 @@
+import math
 import re
 import numpy as np
-from django.shortcuts import render, HttpResponse
-from gensim import models
-from tensorflow.keras.models import Sequential
+from django.shortcuts import render
+from gensim.models import KeyedVectors
 from tensorflow.keras.layers import LSTM
-
+from tensorflow.keras.models import load_model
 # Load word to vector model
-w = models.KeyedVectors.load('C:/Projects/semantic matching/SemanticMatching/Tester/Models/wordvector')
-
-# Define LSTM backward model
-backwardmodel = Sequential()
-backwardmodel.add(LSTM(units=300, go_backwards=True))
-backwardmodel.compile('rmsprop', 'mse')
-
-# Define LSTM forward model
-forwardmodel = Sequential()
-forwardmodel.add(LSTM(units=300))
-forwardmodel.compile('rmsprop', 'mse')
-
+model = KeyedVectors.load('C:/Users/Admin/Data/Final_yr_project/model/wordvector')
+model1=LSTM(300,return_sequences=True) # forward LSTM
+model2=LSTM(300,go_backwards=True,return_sequences=True) # backward LSTM
+model3=load_model('C:/Users/Admin/Data/Final_yr_project/mpsc.h5') #mpsc model for prediction
 
 def home(request):
     if request.method == "POST":
-        print(request.POST)
         print('FILEs = \n', request.FILES['model-answer-sheet'], request.FILES['answer-sheet'])
         modelans = request.FILES['model-answer-sheet']
         userans = request.FILES['answer-sheet']
         for i in modelans.chunks():
             modelans = i.decode()
-            print("Model ans = ", modelans)
         for i in userans.chunks():
             userans = i.decode()
-            print("User ans = ", userans)
         # Here we are ready with 2 sentences now let's calculate their matching degree.
-        sent1 = PreProcess(modelans)
+        sent1 = PreProcess(modelans)     # Data Preprocessing
         sent2 = PreProcess(userans)
-        l1 = len(sent1)
-        l2 = len(sent2)
-        mn = min(l1, l2)
-        sent1orig = GetOriginalSemantics(sent1)
-        sent2orig = GetOriginalSemantics(sent2)
-        sent1orig = sent1orig.reshape((l1, 1, 300))
-        sent2orig = sent2orig.reshape((l2, 1, 300))
-        sent1forward = forwardmodel.predict(sent1orig)
-        sent2forward = forwardmodel.predict(sent2orig)
-        sent1backward = backwardmodel.predict(sent1orig)
-        sent2backward = backwardmodel.predict(sent2orig)
-        sent1orig = sent1orig.reshape((l1, 300))
-        sent2orig = sent2orig.reshape((l2, 300))
-        S1 = np.array([sent1orig, sent1forward, sent1backward])
-        S2 = np.array([sent2orig, sent2forward, sent2backward])
-        cross_comb = []
-        for i in S1:
-            for j in S2:
-                x = np.dot(i, j.T)
-                x = np.pad(x, (50 - mn, 50 - mn))
-                # print(x)
-                if l1 < l2:
-                    x = x[50 - mn:, 50 - mn:-abs(l1 - l2)]
-                elif l1 > l2:
-                    x = x[50 - mn:-abs(l1 - l2), 50 - mn:]
-                else:
-                    x = x[50 - mn:, 50 - mn:]
-                cross_comb.append(x)
-        cross_comb = np.array(cross_comb)
-        print('shape of cross combination is ', cross_comb.shape)
-        score = GetMatchingDegree(cross_comb)
+        vec1 = GetOriginalSemantics(sent1)
+        vec2 = GetOriginalSemantics(sent2)  # The 2 sentences are vectorized
+        forwardX, backwardX = model1(vec1),model2(vec1)
+        forwardY, backwardY = model1(vec2),model2(vec2)    # ofrward and backward semantic generation
+        X=[vec1,forwardX,backwardX]
+        Y=[vec2,forwardY,backwardY]
+        semantics=[]
+        for i in X:
+            for j in Y:
+                semantics.append(np.dot(i,j))
+        semantics = np.array(semantics).reshape(1, 300, 300, 9)
+        print('shape of cross combination is ',semantics.shape)
+        score,accuracy = GetMatchingDegree(semantics)
         iscore = True
-        return render(request, "home.html",{'iscore':iscore, 'score':score})
+        return render(request, "home.html",{'iscore':iscore, 'score':score, 'accuracy':accuracy})
     else:
-        # form = FileForm()
         iscore = False
         return render(request, "home.html", {'iscore':iscore})
 
@@ -84,19 +54,21 @@ def home(request):
     return HttpResponse("yessssssss")"""
 
 
-def GetOriginalSemantics(sent):  # Apply word to vector to every word in sentence
-    semantics = []
-    for i in sent:
+def GetOriginalSemantics(sent):
+    # Apply word to vector to every word in sentence
+    vec=[]
+    for word in sent:
         try:
             try:
-                semantics.append(w[i])
+                vec.append(model[word])
             except:
-                i = i[0].upper() + i[1:]
-                semantics.append(w[i])
+                vec.append(model[word[0].upper()+word[1:]])
         except:
-            semantics.append([0.1] * 300)
-    semantics = np.array(semantics)
-    return semantics
+            pass
+    extra = 300 - len(vec)
+    vec = np.pad(vec, [(0, extra), (0, 0)], 'constant').reshape(1, 300, 300)
+    return np.array(vec, np.float32)
+
 
 
 def PreProcess(sent):  # tokenizing sentence into words
@@ -105,5 +77,9 @@ def PreProcess(sent):  # tokenizing sentence into words
     return sent
 
 
-def GetMatchingDegree(crosscomb):  # Use CNN model here and return matching degree
-    return 0
+def GetMatchingDegree(crosscomb,outoff=5):  # Use CNN model here and return matching degree
+    pos=model3.predict(crosscomb)
+    threshold=0.03 # current Threshold Difference between 0 and 1
+    range=threshold/outoff
+    val=pos[0][0]-0.62   # 0.62 is the lower bound and 0.65 is the upper bound
+    return math.floor(val/range),pos[0][0]

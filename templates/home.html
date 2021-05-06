@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <title>Question Answer Matching System</title>
+  <link rel="stylesheet" href="{% static 'css/my_style.css' %}"/>
+</head>
+<body style="background-color:#41B3A3;">
+<center>
+<h3>Demo Test Questionnaire</h3>
+
+<div class="content">
+  <form action = "" method = "post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h5>Question: "Write sample question here" ? </h5>
+    <h5>Please upload model answer sheet below :</h5>
+    <input name="model-answer-sheet" type="file">
+    <h5>Please upload your answer sheet below :</h5>
+    <input name="answer-sheet" type="file"><br><br>
+    <button type="submit">Check result</button>
+    </form>
+  {% if iscore %}
+  <br><br>
+  <h3>The accuracy score is {{ accuracy }}</h3>
+  <h3>The Marks score are {{ score }} out off 5</h3>
+  {% endif %}
+</div>
+</center>
+</body>
+</html>
