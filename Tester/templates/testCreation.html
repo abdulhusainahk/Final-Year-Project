@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>Create Test</title>
+        <link rel="stylesheet" href="../static/css/form.css">
+        <script src="../static/js/testCreate.js"></script>
+        <script>
+            var tests=JSON.parse('{{tests | safe}}');
+        </script>
+    </head>
+<body> 
+    <div class="container">  
+        <form id="test" action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+          <h3>Test Creation</h3>
+          <h4>Enter details for test below !</h4>
+          <fieldset>
+            <input placeholder="Test Name" type="text" tabindex="1" name="name" required autofocus>
+          </fieldset>
+          <fieldset>
+            <input placeholder="Test Access Code" type="text" tabindex="2" name="code" id="code" required>
+          </fieldset>
+          <fieldset>
+            <input placeholder="Subject" type="text" tabindex="3" name="subject" required>
+          </fieldset>
+          <fieldset>
+            <h4>Upload Your Model Question and Answers here (Excel File):</h4>
+            <input placeholder="Model Answer)" type="file" tabindex="4" name="paper" required>
+          </fieldset>
+          <fieldset>
+            <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
+          </fieldset>
+          <p class="copyright">Designed by <a href="signlog.html" target="_blank" title="Quest on Marks">Quest on Marks</a></p>
+        </form>
+      </div>
+
+
+</body>
+</html>

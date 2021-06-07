@@ -16,11 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
-from django.conf.urls.static import static
-
+from django.views.generic import TemplateView
+from Tester import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('Tester.urls')),
-    #path('register', views.regis),
-]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
+    #path('admin/', admin.site.urls),
+    path('', views.userSigning),
+    path('dashboard/', views.dashBoard),
+    path('dashboard/testcreate', views.testCreation),
+    path('dashboard/testhistory', views.testHistory),
+    path('dashboard/appear', views.testAppear, name="appear"),
+    path('dashboard/appear/<testId>', views.testAppear, name="appear"),
+
+]

@@ -1,0 +1,106 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,600,400italic);
+
+body{
+	font-family: "Roboto", Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+header{
+	position: fixed;
+	background: #2F323A;;
+	padding: 20px;
+	top: 0px;
+	width: 100%;
+	height: 50px;
+}
+
+.site-name a{
+	text-decoration: none;
+}
+
+.site-name h1{
+	color: #FFFFFF;
+	margin: 0;
+	padding: 10px;
+	font-family: roboto;
+	text-align: left;
+	font-weight: 0.5;
+}
+
+.nav{
+/*	background: linear-gradient(to bottom right, #8CA6DB, #FFFFFF, #B993D6); */
+	background: #2F323A;
+	margin-top: 0px;
+	padding-top: 30px;
+	position: fixed;
+	left: 0;
+	width: 250px;
+	height: 100%;
+}
+
+.nav img{
+	border: 2px solid black;
+}
+
+.nav h3{
+	margin-top: 0px;
+	margin-bottom: 20px;
+	color: #FFFFFF;
+}
+
+.nav .profile-pic{
+	width: 100px;
+	height: 100px;
+	border-radius: 100px;
+	margin-bottom: 10px;
+}
+
+.nav .header{
+	padding-left: 95px;
+	padding-top: 20px;
+	background-color: black;
+	padding-bottom: 5px;
+}
+
+.nav a{
+	color: #FFFFFF;
+	display: block;
+	width: 100%;
+	line-height: 60px;
+	text-decoration: none;
+	padding-left: 40px;
+	box-sizing: border-box;
+	transition: all 150ms ease-out;
+}
+
+.nav a:hover{
+	background: linear-gradient(#8CA6DB, #B993D6);
+}
+
+.nav i{
+	padding-right: 10px;
+}
+
+.content{
+/*	margin-left: 250px;
+	margin-right: 250px;
+	margin-bottom: 250px;*/
+	margin-left: 252px;
+	margin-top: 92px;
+	/*background-position: center;*/
+	background-size: contain;
+	height: 100vh;
+}
+
+
+/* Centered text */
+.text {
+  position: relative;
+  text-align: left;
+  color: #FFFFFF;
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+}

@@ -1,0 +1,67 @@
+<html>
+    <head>
+      <title>Test Histroy</title>
+      <link rel="stylesheet" href="../static/css/history.css">
+    </head>
+<body> 
+<div class="wrapper">
+  <h1>Test History</h1>
+  <div class="cols">
+			<div class="col" ontouchstart="this.classList.toggle('hover');">
+				<div class="container">
+					<div class="front" style="background-image: url(../static/images/scott-graham-5fNmWej4tAA-unsplash.jpg)">
+						<div class="inner">
+							<p>Tests Created</p>
+						</div>
+					</div>
+					<div class="back">
+						<div class="inner">
+							<table>
+								<tr>
+									<th>Serial No.:</th>
+									<th>Test Name</th>
+								</tr>
+								{% for test in createdtests %}
+								<tr>
+									<td>{{forloop.counter}}</td>
+									<td>{{test.code.testName}}</td>
+								</tr>
+								{% endfor %}
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col" ontouchstart="this.classList.toggle('hover');">
+				<div class="container">
+					<div class="front" style="background-image: url(../static/images/seth-schwiet-WB3ujiKLJwQ-unsplash.jpg)">
+						<div class="inner">
+							<p>Tests Appeared</p>
+              
+						</div>
+					</div>
+					<div class="back">
+						<div class="inner">
+							<table>
+								<tr>
+									<th>Serial No.:</th>
+									<th>Test Name</th>
+									<th>Total Score</th>
+								</tr>
+								{% for test in completedtests %}
+								<tr>
+									<td>{{forloop.counter}}</td>
+									<td>{{test.code.testName}}</td>
+									<td>{{test.marksObtained}}</td>
+								</tr>
+								{% endfor %}
+
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+ </div>
+ </body>
+ </html>

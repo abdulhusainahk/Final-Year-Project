@@ -1,0 +1,3 @@
+Hi this is model ans.
+M8TLTR31B7C3MQCS
+https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=demo

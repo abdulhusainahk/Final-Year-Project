@@ -1,0 +1,101 @@
+<html>
+<head>
+<title>Quest on Marks</title>
+<link rel="stylesheet" type="text/css" href="../static/css/signlog.css">
+
+</head>
+
+<body>
+<!--
+<header>
+	<div class="site-name">
+		<a href="#"><h1> Quest On Marks </h1></a>
+	</div>
+</header>
+-->
+<div class="form-structor">
+	<div class="login slide-up">
+		<div class="center">
+			<h2 class="form-title" id="login"><span>or</span>Log in</h2>
+			<form method="POST" action="/" id="form1">
+			{% csrf_token %}
+			<div class="form-holder">
+				<input type="email" class="input" placeholder="Email" name="email"/>
+				<input type="password" class="input" placeholder="Password" name="password"/>
+			</div>
+			<button class="submit-btn">Log in</button>
+			</form>
+		</div>
+	</div>
+	<div class="signup">
+		<h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
+		<form  id="form2" method="POST" action="/">
+			{% csrf_token %}
+		<div class="form-holder">
+			<input type="text" class="input" placeholder="Name" name="name" />
+			<input type="email" class="input" placeholder="Email" name="email"/>
+			<input type="password" class="input" placeholder="Password" name="password" />
+		</div>
+		<button type="submit" class="submit-btn">Sign up</button>
+		</form>
+	</div>
+</div>
+
+<script>
+	//console.clear();
+
+	const loginBtn = document.getElementById('login');
+	const signupBtn = document.getElementById('signup');
+	let form1 = document.getElementById('form1');
+	let form2 = document.getElementById('form2');
+	form1.addEventListener('submit', function(){
+		let inp=document.createElement("input");
+		inp.setAttribute("type", "hidden");
+		inp.setAttribute("name", "option");
+		inp.setAttribute("value", "login");
+		form1.appendChild(inp);
+		form1.submit();
+	});
+	form2.addEventListener('submit', (event)=>{
+		let inp=document.createElement("input");
+		inp.setAttribute("type", "hidden");
+		inp.setAttribute("name", "option");
+		inp.setAttribute("value", "signup");
+		form2.appendChild(inp);
+		console.log(form2.elements);
+		//event.preventDefault();
+		form2.submit();
+
+	});
+	loginBtn.addEventListener('click', (e) => {
+		let parent = e.target.parentNode.parentNode;
+		Array.from(e.target.parentNode.parentNode.classList).find((element) => {
+			if(element !== "slide-up") {
+				parent.classList.add('slide-up')
+			}else{
+				signupBtn.parentNode.classList.add('slide-up')
+				parent.classList.remove('slide-up')
+			}
+		});
+	});
+
+	signupBtn.addEventListener('click', (e) => {
+		let parent = e.target.parentNode;
+		Array.from(e.target.parentNode.classList).find((element) => {
+			if(element !== "slide-up") {
+				parent.classList.add('slide-up')
+			}else{
+				loginBtn.parentNode.parentNode.classList.add('slide-up')
+				parent.classList.remove('slide-up')
+			}
+		});
+	});
+
+function setOption(msg){
+	console.log();
+}
+
+</script>
+
+</body>
+</html>

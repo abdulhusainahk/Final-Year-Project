@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>Test</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/form.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    </head>
+<body> 
+    <div class="container">
+        <form id="test" action="" method="post">
+            {% csrf_token %}
+          <h3>{{test.testName}}</h3>
+          <h4>All the best !</h4>
+
+            {% for question in questions %}
+          <fieldset>
+            <h4>{{forloop.counter}}. {{question}}</h4>
+            <textarea placeholder="Enter your answer here: " name="answer{{forloop.counter}}" tabindex="4" required></textarea>
+          </fieldset>
+       {% endfor %}
+          <fieldset>
+            <button name="submit" type="submit" id="test-submit" data-submit="...Sending">Submit</button>
+          </fieldset>
+
+          <p class="copyright">Designed by <a href="signlog.html" target="_blank" title="Quest on Marks">Quest on Marks</a></p>
+        </form>
+      </div>
+
+
+
+</body>
+</html>
