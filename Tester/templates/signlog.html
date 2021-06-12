@@ -5,7 +5,7 @@
 
 </head>
 
-<body>
+<body onload="HandleBackFunctionality()">
 <!--
 <header>
 	<div class="site-name">
@@ -42,7 +42,14 @@
 </div>
 
 <script>
-	//console.clear();
+
+	function HandleBackFunctionality(){
+	console.log(performance.navigation);
+	if(performance.navigation.type == 2){
+		//location.href = "/logout/";
+	}
+
+}
 
 	const loginBtn = document.getElementById('login');
 	const signupBtn = document.getElementById('signup');

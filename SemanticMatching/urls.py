@@ -25,6 +25,7 @@ urlpatterns = [
     path('dashboard/', views.dashBoard),
     path('dashboard/testcreate', views.testCreation),
     path('dashboard/testhistory', views.testHistory),
+    path('logout/', views.logOut),
     path('dashboard/appear', views.testAppear, name="appear"),
     path('dashboard/appear/<testId>', views.testAppear, name="appear"),
 

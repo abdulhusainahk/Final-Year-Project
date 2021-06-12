@@ -11,7 +11,7 @@
 	</script>
 </head>
 
-<body >
+<body onbeforeunload="fun()">
 
 	<div class="header">
         <header>
@@ -33,7 +33,7 @@
 		<a onclick="load_testCreation()"><i class="fa fa-file-text"></i> Create Test </a>
 		<a onclick="submitCode({{tests}})"><i class="fa fa-pencil-square-o"></i> Appear for Test </a>
 		<a onclick="load_history()"><i class="fa fa-history"></i> Test History </a>
-		<a href="#"><i class="fa fa-sign-out"></i> Logout </a>
+		<a href="/logout/"><i class="fa fa-sign-out"></i> Logout </a>
 	</div>
 
 		<div class="content" style="background-image: url(../static/images/glenn-carstens-peters-P1qyEf1g0HU-unsplash.jpg);" id="content">

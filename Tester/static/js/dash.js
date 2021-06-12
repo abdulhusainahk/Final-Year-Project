@@ -1,4 +1,6 @@
-
+function fun(){
+console.log(performance.navigation.type);
+}
 function load_testCreation() {
 				document.getElementById("frame1").style.display="none";
 				document.getElementById("content").style.display="block";
@@ -51,6 +53,9 @@ function submitCode(tests) {
     }
 
 }
+
+
+
 if(window.history.replaceState){
 		window.history.replaceState(null,null,window.location.href);
 	}

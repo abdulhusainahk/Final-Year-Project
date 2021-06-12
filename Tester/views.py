@@ -1,10 +1,10 @@
 from django.core import serializers
-import json
+from django.views.decorators.cache import cache_control
 import re
 import numpy as np
 from django.shortcuts import render, redirect, HttpResponse
 from django.template.response import TemplateResponse
-from .models import User, Test, CompletedTests,CreatedTests
+from .models import User, Test, CompletedTests, CreatedTests
 
 from gensim.models import KeyedVectors
 
@@ -12,7 +12,7 @@ from gensim.models import KeyedVectors
 # from tensorflow.keras.models import load_model
 
 # Load word to vector model
-#model = KeyedVectors.load('Models/wordvector')
+# model = KeyedVectors.load('Models/wordvector')
 # model1 = LSTM(300, return_sequences=True)  # forward LSTM
 # model2 = LSTM(300, go_backwards=True, return_sequences=True)  # backward LSTM
 # model3 = load_model('C:/Users/Admin/Data/Final_yr_project/mpsc.h5')  # mpsc model for prediction
@@ -20,7 +20,7 @@ questions = []
 modelAnswers = []
 
 
-def getRecord(model,key):
+def getRecord(model, key):
     return model.objects.get(key)
 
 
@@ -31,10 +31,10 @@ def GetOriginalSemantics(sent):
         try:
             try:
                 ''
-                #vec.append(model[word])
+                # vec.append(model[word])
             except:
                 ''
-                #vec.append(model[word[0].upper() + word[1:]])
+                # vec.append(model[word[0].upper() + word[1:]])
         except:
             pass
     extra = 300 - len(vec)
@@ -77,17 +77,18 @@ def userSigning(request):
         return render(request, "signlog.html")
 
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dashBoard(request):
-
+    print(request.session['username'])
     if request.method == "POST":
-        return render(request, "dash.html",)
+        return render(request, "dash.html", )
     else:
         tests = []
         completedTests = serializers.serialize('json', CompletedTests.objects.all())
         for i in Test.objects.all():
             tests.append(i.code)
         return render(request, "dash.html",
-                      {'tests': tests, 'completedTests': completedTests , 'userName': request.session['username']})
+                      {'tests': tests, 'completedTests': completedTests, 'userName': request.session['username']})
 
 
 def insertUser(name, email, password):
@@ -112,19 +113,20 @@ def testCreation(request):
     if request.method == "POST":
         test = Test(request.POST['code'], request.POST['name'], request.POST['subject'], request.FILES['paper'])
         test.save()
-        ctest = CreatedTests(code=Test.objects.get(code=request.POST['code']), userEmail=User.objects.get(userEmail=request.session['username']))
+        ctest = CreatedTests(code=Test.objects.get(code=request.POST['code']),
+                             userEmail=User.objects.get(userEmail=request.session['username']))
         ctest.save()
         print("test created")
         return TemplateResponse(request, "redirectTemplate.html")
     else:
         tests = serializers.serialize('json', Test.objects.all())
-        return render(request, "testCreation.html", {'tests':tests})
+        return render(request, "testCreation.html", {'tests': tests})
 
 
 def testHistory(request):
     completedtests = CompletedTests.objects.filter(userEmail=request.session['username'])
     createdtests = CreatedTests.objects.filter(userEmail=request.session['username'])
-    return render(request, "history.html", {'createdtests': createdtests, 'completedtests':completedtests})
+    return render(request, "history.html", {'createdtests': createdtests, 'completedtests': completedtests})
 
 
 def testAppear(request, testId="0"):
@@ -134,9 +136,11 @@ def testAppear(request, testId="0"):
             marks = 0
             for i in range(len(questions)):
                 userAnswer = request.POST['answer' + str(i + 1)]
-                marks += getMarks(userAnswer,modelAnswers[i])
+                marks += getMarks(userAnswer, modelAnswers[i])
 
-            ctest = CompletedTests(code=Test.objects.get(code=int(testId)),userEmail = User.objects.get(userEmail=request.session['username']),marksObtained = marks)
+            ctest = CompletedTests(code=Test.objects.get(code=int(testId)),
+                                   userEmail=User.objects.get(userEmail=request.session['username']),
+                                   marksObtained=marks)
             ctest.save()
             print('saved')
             return TemplateResponse(request, "redirectTemplate.html")
@@ -160,6 +164,13 @@ def testAppear(request, testId="0"):
     except Exception as e:
         print(e)
         pass
+
+
+def logOut(request):
+    print(request.session['username'], request.session)
+    del request.session['username']
+    print('session deleted !!', request.session)
+    return redirect("/")
 
 
 def getMarks(userAnswer, modelAnswer):
