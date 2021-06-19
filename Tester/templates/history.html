@@ -20,11 +20,15 @@
 								<tr>
 									<th>Serial No.:</th>
 									<th>Test Name</th>
+									<th>Date</th>
+									<th>Author</th>
 								</tr>
 								{% for test in createdtests %}
-								<tr>
+								<tr class="row" onclick="loadSummary({{test.code.code}})">
 									<td>{{forloop.counter}}</td>
 									<td>{{test.code.testName}}</td>
+									<td>{{test.code.date}}</td>
+									<td>{{test.code.author}}</td>
 								</tr>
 								{% endfor %}
 							</table>
@@ -42,17 +46,23 @@
 					</div>
 					<div class="back">
 						<div class="inner">
-							<table>
+							<table style="width:80%;margin-left:-15px;max-height:200px;overflow:auto">
 								<tr>
-									<th>Serial No.:</th>
+									<th>Serial No.</th>
+									<th>Date</th>
+									<th>Author</th>
 									<th>Test Name</th>
+									<th>Score</th>
 									<th>Total Score</th>
 								</tr>
 								{% for test in completedtests %}
-								<tr>
+								<tr class="row" onclick="loadResult({{test.code.code}})">
 									<td>{{forloop.counter}}</td>
+									<td>{{test.code.date}}</td>
+									<td>{{test.code.author}}</td>
 									<td>{{test.code.testName}}</td>
 									<td>{{test.marksObtained}}</td>
+									<td>{{test.code.totalMarks}}</td>
 								</tr>
 								{% endfor %}
 
@@ -63,5 +73,23 @@
 			</div>
 		</div>
  </div>
+
+<script>
+	function loadResult(code){
+			console.log("here ");
+			var f1 = parent.document.getElementById("frame1");
+			parent.document.getElementById("content").style.display="none";
+            f1.style.display="block";
+            f1.data = "result/" + code.toString();
+	}
+
+	function loadSummary(code){
+			console.log("here 2 ");
+			var f1 = parent.document.getElementById("frame1");
+			parent.document.getElementById("content").style.display="none";
+            f1.style.display="block";
+            f1.data = "summary/" + code.toString();
+	}
+</script>
  </body>
  </html>

@@ -1,0 +1,65 @@
+<html>
+    <head>
+      <title>Result</title>
+    </head>
+    <style>
+        body{
+        width:80%;
+  background: linear-gradient(#8CA6DB, #B993D6);
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+}
+
+    table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd6b;
+}
+    </style>
+<body>
+<div class="wrapper">
+    <br><br><br>
+    <div style="text-align:center;">
+        <div style="float:left;">
+        <h3>Student : {{student}}</h3>
+        <h3>Test Name: {{test.testName}}</h3>
+        <h3>Subject: {{test.subject}}</h3>
+        </div>
+        <div style="float:right;">
+        <h3>Test Author: {{test.author}}</h3>
+        <h3>Date: {{test.date}}</h3>
+        </div>
+        <div style="margin:0 auto;">
+        <h1>Result </h1>
+        </div>
+    </div>
+    <div style="clear:both;">
+        <br>
+  <table width="100%">
+    <tr>
+        <th>No.</th>
+        <th>Question</th>
+        <th>Score</th>
+        <th>Total Marks</th>
+    </tr>
+    {% for i in result %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{i.question}}</td>
+        <td>{{i.marks}}</td>
+        <td>{{i.totalMarks}}</td>
+    </tr>
+    {% endfor %}
+</table></div>
+ </div>
+ </body>
+ </html>

@@ -209,7 +209,9 @@ td, th {
   text-align: left;
   padding: 8px;
 }
-
+.row:hover{
+color:blue;
+}
 tr:nth-child(even) {
   background-color: #dddddd6b;
 }

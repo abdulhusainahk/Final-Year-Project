@@ -1,0 +1,91 @@
+<html>
+    <head>
+      <title>Performance</title>
+    </head>
+    <style>
+        body{
+        width:80%;
+  background: linear-gradient(#8CA6DB, #B993D6);
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+}
+
+    table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+.row:hover{
+cursor:pointer;
+color:blue;
+}
+
+a:hover{
+color:blue;
+}
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd6b;
+}
+    </style>
+<body>
+<div class="wrapper">
+    <br><br><br>
+    <div style="text-align:center;">
+        <div style="float:left;">
+        <h3>Test Name: {{test.testName}}</h3>
+        <h3>Subject: {{test.subject}}</h3>
+        </div>
+        <div style="float:right;">
+        <h3>Test Author: {{test.author}}</h3>
+        <h3>Date: {{test.date}}</h3>
+        </div>
+        <div style="margin:0 auto;">
+        <h1>Summary </h1>
+        </div>
+    </div>
+    <div style="clear:both;">
+        <br>
+  <table width="100%">
+    <tr>
+        <th>No.</th>
+        <th>User Name</th>
+        <th>Marks</th>
+        <th>Total Marks</th>
+    </tr>
+    {% for i in summary %}
+
+    <tr class="row" onclick="loadResult({{test.code}}, '{{i.userEmail.userEmail}}')">
+        <td>{{forloop.counter}}</td>
+        <td>{{i.userEmail.userEmail}}</td>
+        <td>{{i.marksObtained}}</td>
+        <td>{{i.code.totalMarks}}</td>
+    </tr>
+    {% endfor %}
+</table></div>
+ </div>
+
+<script>
+    function loadResult(code,user){
+			console.log("here from performance", user);
+			var f1 = parent.document.getElementById("frame1");
+			parent.document.getElementById("content").style.display="none";
+            f1.style.display="block";
+            a = code.toString();
+            b = user.toString();
+            /*f1.data = "result/" + code.toString() + user.toString();
+            f1.data = "{% url 'result' testId='code' user='user' %}";
+            console.log("{% url 'result' testId='code' user='user' %}");*/
+            x = "{% url 'result' testId='x' user='y' %}".replace(/x/, a);
+            x = x.replace(/y/,b)
+            //f1.data = "result/1234/amoghjkul21@gmail.com";
+            //document.getElementById("anc").href=x;
+            window.location.href = x;
+	}
+</script>
+ </body>
+ </html>

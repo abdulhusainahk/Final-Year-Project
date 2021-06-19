@@ -4,8 +4,8 @@ import re
 import numpy as np
 from django.shortcuts import render, redirect, HttpResponse
 from django.template.response import TemplateResponse
-from .models import User, Test, CompletedTests, CreatedTests
-
+from .models import User, Test, CompletedTests, CreatedTests, Result
+import datetime
 from gensim.models import KeyedVectors
 
 # from tensorflow.keras.layers import LSTM
@@ -18,6 +18,8 @@ from gensim.models import KeyedVectors
 # model3 = load_model('C:/Users/Admin/Data/Final_yr_project/mpsc.h5')  # mpsc model for prediction
 questions = []
 modelAnswers = []
+marksPerQuestion = []
+print(datetime.date.today())
 
 
 def getRecord(model, key):
@@ -48,7 +50,7 @@ def PreProcess(sent):  # tokenizing sentence into words
     return sent
 
 
-def GetMatchingDegree(crosscomb, outoff=5):  # Use CNN model here and return matching degree
+def GetMatchingDegree(crosscomb, outoff):  # Use CNN model here and return matching degree
     """pos = model3.predict(crosscomb)
     threshold = 0.03  # current Threshold Difference between 0 and 1
     range = threshold / outoff
@@ -102,6 +104,7 @@ def insertUser(name, email, password):
 
 def validateUser(email, password):
     users = User.objects.all()
+    print(users)
     for user in users:
         if email == user.userEmail and password == user.userPassword:
             return True
@@ -111,7 +114,9 @@ def validateUser(email, password):
 
 def testCreation(request):
     if request.method == "POST":
-        test = Test(request.POST['code'], request.POST['name'], request.POST['subject'], request.FILES['paper'])
+
+        test = Test(request.POST['code'], request.POST['name'], request.POST['subject'], request.FILES['paper'],
+                    request.session['username'], datetime.date.today(), getTotalMarks(request.FILES['paper']))
         test.save()
         ctest = CreatedTests(code=Test.objects.get(code=request.POST['code']),
                              userEmail=User.objects.get(userEmail=request.session['username']))
@@ -119,6 +124,7 @@ def testCreation(request):
         print("test created")
         return TemplateResponse(request, "redirectTemplate.html")
     else:
+        print(Test.objects.all())
         tests = serializers.serialize('json', Test.objects.all())
         return render(request, "testCreation.html", {'tests': tests})
 
@@ -130,13 +136,18 @@ def testHistory(request):
 
 
 def testAppear(request, testId="0"):
-    global modelAnswers, questions
+    global modelAnswers, questions, marksPerQuestion
     try:
         if request.method == "POST":
             marks = 0
             for i in range(len(questions)):
                 userAnswer = request.POST['answer' + str(i + 1)]
-                marks += getMarks(userAnswer, modelAnswers[i])
+                c = getMarks(userAnswer, modelAnswers[i], marksPerQuestion[i])
+                result = Result(code=Test.objects.get(code=int(testId)),userEmail=User.objects.get(userEmail=request.session['username']),  question=questions[i],
+                                marks=c, totalMarks=marksPerQuestion[i])
+                result.save()
+                print("answer updated for test ", testId)
+                marks += c
 
             ctest = CompletedTests(code=Test.objects.get(code=int(testId)),
                                    userEmail=User.objects.get(userEmail=request.session['username']),
@@ -147,6 +158,7 @@ def testAppear(request, testId="0"):
         else:
             modelAnswers = []
             questions = []
+            marksPerQuestion = []
             testId = int(testId)
             testDetails = Test.objects.get(code=testId)
             questionPaper = testDetails.questionPaper
@@ -154,16 +166,39 @@ def testAppear(request, testId="0"):
             for i in questionPaper.chunks():
                 data = i.decode()
             data = data.split('\n')
-            data.pop(2)
+            data.pop(-1)
             for i in data:
                 x = (i.split(','))
                 questions.append(x[0])
                 modelAnswers.append(x[1])
+                marksPerQuestion.append(int(x[2]))
 
             return render(request, "studentTest.html", {"test": testDetails, "questions": questions})
     except Exception as e:
         print(e)
         pass
+
+
+def loadTestDetails(request, testId, user=None):
+    result = None
+    print('user==>', user)
+    if user == None:
+        print("loading test details for ", testId, " by ", request.session['username'])
+        user = request.session['username']
+        result = Result.objects.filter(code=int(testId),userEmail=request.session['username'])
+        print(result)
+    else:
+        print("loading test details for student ", testId, " by ", request.session['username'])
+        result = Result.objects.filter(code=int(testId), userEmail=user)
+        print(result)
+    return render(request, "result.html", {'result':result, 'test':Test.objects.get(code=int(testId)), 'student':user})
+
+
+def loadTestSummary(request, testId):
+    print("loading test details for ", testId, " by ", request.session['username'])
+    summary = CompletedTests.objects.filter(code=int(testId))
+    print('summary = ', summary)
+    return render(request, "performance.html", {'summary':summary, 'test':Test.objects.get(code=int(testId))})
 
 
 def logOut(request):
@@ -173,7 +208,7 @@ def logOut(request):
     return redirect("/")
 
 
-def getMarks(userAnswer, modelAnswer):
+def getMarks(userAnswer, modelAnswer, outoff): # outoff = maximum marks for this question
     """sent1 = PreProcess(modelAnswer)  # Data Preprocessing
     sent2 = PreProcess(userAnswer)
     vec1 = GetOriginalSemantics(sent1)
@@ -188,12 +223,21 @@ def getMarks(userAnswer, modelAnswer):
             semantics.append(np.dot(i, j))
     semantics = np.array(semantics).reshape(1, 300, 300, 9)
     print('shape of cross combination is ', semantics.shape)
-    score, accuracy = GetMatchingDegree(semantics)
+    score, accuracy = GetMatchingDegree(semantics,outoff)
 
 
-    ctest = CompletedTests(code=Test.objects.get(code=int(testId)), userEmail=User.objects.get(request.session['username']))
-            print('saved', marks)
-            ctest.marksObtained = marks
-
-    """
+        """
     return 0
+
+
+def getTotalMarks(file):
+    total = 0
+    for i in file.chunks():
+        data = i.decode()
+    data = data.split('\n')
+    print(data[2])
+    data.pop(-1)
+    for i in data:
+        x = (i.split(','))
+        total += int(x[2])
+    return total

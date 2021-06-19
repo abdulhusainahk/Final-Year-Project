@@ -28,5 +28,8 @@ urlpatterns = [
     path('logout/', views.logOut),
     path('dashboard/appear', views.testAppear, name="appear"),
     path('dashboard/appear/<testId>', views.testAppear, name="appear"),
+    path('dashboard/result/<testId>', views.loadTestDetails, name="result"),
+    path('dashboard/result/<testId>/<user>', views.loadTestDetails, name="result"),
+    path('dashboard/summary/<testId>', views.loadTestSummary, name="summary"),
 
 ]
