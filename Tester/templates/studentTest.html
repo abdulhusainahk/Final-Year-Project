@@ -7,11 +7,10 @@
     </head>
 <body> 
     <div class="container">
-        <form id="test" action="" method="post">
+        <form id="test" method="post">
             {% csrf_token %}
           <h3>{{test.testName}}</h3>
           <h4>All the best !</h4>
-
             {% for question in questions %}
           <fieldset>
             <h4>{{forloop.counter}}. {{question}}</h4>
@@ -21,8 +20,7 @@
           <fieldset>
             <button name="submit" type="submit" id="test-submit" data-submit="...Sending">Submit</button>
           </fieldset>
-
-          <p class="copyright">Designed by <a href="signlog.html" target="_blank" title="Quest on Marks">Quest on Marks</a></p>
+            <p class="copyright">Designed by <a href="signlog.html" target="_blank" title="Quest on Marks">Quest on Marks</a></p>
         </form>
       </div>
 

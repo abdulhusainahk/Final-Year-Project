@@ -7,16 +7,16 @@ from django.template.response import TemplateResponse
 from .models import User, Test, CompletedTests, CreatedTests, Result
 import datetime
 from gensim.models import KeyedVectors
-
-# from tensorflow.keras.layers import LSTM
-# from tensorflow.keras.models import load_model
+import math
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.models import load_model
 
 # Load word to vector model
-# model = KeyedVectors.load('Models/wordvector')
-# model1 = LSTM(300, return_sequences=True)  # forward LSTM
-# model2 = LSTM(300, go_backwards=True, return_sequences=True)  # backward LSTM
-# model3 = load_model('C:/Users/Admin/Data/Final_yr_project/mpsc.h5')  # mpsc model for prediction
-questions = []
+model = KeyedVectors.load('C:/Users/Admin/Data/Final_yr_project/model/wordvector')
+model1 = LSTM(300, return_sequences=True)  # forward LSTM
+model2 = LSTM(300, go_backwards=True, return_sequences=True)  # backward LSTM
+model3 = load_model('C:/Users/Admin/Data/Final_yr_project/mpsc.h5')  # mpsc model for prediction
+uestions = []
 modelAnswers = []
 marksPerQuestion = []
 print(datetime.date.today())
@@ -32,11 +32,11 @@ def GetOriginalSemantics(sent):
     for word in sent:
         try:
             try:
-                ''
-                # vec.append(model[word])
+
+                vec.append(model[word])
             except:
-                ''
-                # vec.append(model[word[0].upper() + word[1:]])
+
+                vec.append(model[word[0].upper() + word[1:]])
         except:
             pass
     extra = 300 - len(vec)
@@ -51,13 +51,12 @@ def PreProcess(sent):  # tokenizing sentence into words
 
 
 def GetMatchingDegree(crosscomb, outoff):  # Use CNN model here and return matching degree
-    """pos = model3.predict(crosscomb)
+    pos = model3.predict(crosscomb)
     threshold = 0.03  # current Threshold Difference between 0 and 1
     range = threshold / outoff
     val = pos[0][0] - 0.62  # 0.62 is the lower bound and 0.65 is the upper bound
     return math.floor(val / range), pos[0][0]
-    """
-    return 0
+
 
 
 def userSigning(request):
@@ -122,7 +121,7 @@ def testCreation(request):
                              userEmail=User.objects.get(userEmail=request.session['username']))
         ctest.save()
         print("test created")
-        return TemplateResponse(request, "redirectTemplate.html")
+        return TemplateResponse(request, "redirectTemplate.html",{'alert1':True})
     else:
         print(Test.objects.all())
         tests = serializers.serialize('json', Test.objects.all())
@@ -154,7 +153,7 @@ def testAppear(request, testId="0"):
                                    marksObtained=marks)
             ctest.save()
             print('saved')
-            return TemplateResponse(request, "redirectTemplate.html")
+            return TemplateResponse(request, "redirectTemplate.html",{'alert2':True})
         else:
             modelAnswers = []
             questions = []
@@ -209,7 +208,7 @@ def logOut(request):
 
 
 def getMarks(userAnswer, modelAnswer, outoff): # outoff = maximum marks for this question
-    """sent1 = PreProcess(modelAnswer)  # Data Preprocessing
+    sent1 = PreProcess(modelAnswer)  # Data Preprocessing
     sent2 = PreProcess(userAnswer)
     vec1 = GetOriginalSemantics(sent1)
     vec2 = GetOriginalSemantics(sent2)  # The 2 sentences are vectorized
@@ -224,10 +223,7 @@ def getMarks(userAnswer, modelAnswer, outoff): # outoff = maximum marks for this
     semantics = np.array(semantics).reshape(1, 300, 300, 9)
     print('shape of cross combination is ', semantics.shape)
     score, accuracy = GetMatchingDegree(semantics,outoff)
-
-
-        """
-    return 0
+    return score
 
 
 def getTotalMarks(file):

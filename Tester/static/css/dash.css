@@ -98,9 +98,28 @@ header{
 .text {
   position: relative;
   text-align: left;
-  color: #FFFFFF;
   position: absolute;
+  margin-top: 30px;
   top: 40%;
-  left: 40%;
+  left: 50%;
   transform: translate(-50%, -50%);
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 150%;
+}
+.shine {
+    background: #222 -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0 no-repeat;
+    -webkit-background-size: 125px;
+    color: rgb(192,192,192);
+    -webkit-background-clip: text;
+    -webkit-animation-name: shine;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+}
+@keyframes shine{
+    0% {
+        background-position: top left;
+    }
+    100% {
+        background-position: bottom right;
+    }
 }
