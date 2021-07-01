@@ -20,7 +20,7 @@ from django.views.generic import TemplateView
 from Tester import views
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', views.userSigning),
     path('dashboard/', views.dashBoard),
     path('dashboard/testcreate', views.testCreation),
